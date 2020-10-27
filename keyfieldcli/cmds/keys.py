@@ -3,7 +3,7 @@ from nacl.signing import SigningKey, VerifyKey
 from nacl.public import PrivateKey, PublicKey
 from nacl.encoding import URLSafeBase64Encoder
 
-from ..utils import get_timestamp_seconds
+from ..utils import get_timestamp_seconds, get_username
 from ..localstorage import LocalStorage
 
 def _get_user_signingkey(username):
@@ -74,16 +74,29 @@ def new_user(args):
                 "publickey": _get_device_publickey().encode(),
             }
         }
-        us.save()
-        ds.save()
-        print(f"Identity created: {_get_user_verifykey(username).encode(URLSafeBase64Encoder)} with username {username}")
+    print(f"Identity created: {_get_user_verifykey(username).encode(URLSafeBase64Encoder)} with username {username}")
 
-def rotate_user_key():
+def rotate_user_key(args):
     """Rotates the user main key.
 
     Required when a device was removed to keep future content safe.
+
+    Maximum rotation rate once per second, but please don't: it will just make
+    the user identity block bloated, eventually blocking the user by upload limit.
     """
-    pass
+    username = get_username(args)
+    user_storage = LocalStorage(username)
+    old_signing = _get_user_signingkey(username)
+    old_private = _get_user_privatekey(username)
+    timestamp = get_timestamp_seconds()
+    with user_storage as us:
+        us["signingkey"] = SigningKey.generate().encode()
+        us["privatekey"] = PrivateKey.generate().encode()
+        us["previous_keys"][timestamp] = {
+            "signingkey": us["signingkey"],
+            "privatekey": us["privatekey"],
+        }
+        # TODO add signatures to stored data for access later
 
 def new_device(args):
     """Creates a device key set, might not be attached to a user yet.

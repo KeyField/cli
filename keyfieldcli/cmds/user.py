@@ -31,6 +31,7 @@ def _build_profile_block(username):
     with user_storage as us:
         pb['username'] = us['username']
         pb['homeserver'] = us['homeserver']
+        # WARNING do not accidentally leak keys here
         pb['keys'] = {
             'verify': keys._get_user_verifykey(us['username']).encode(URLSafeBase64Encoder).decode('utf-8'),
             'public': keys._get_user_publickey(us['username']).encode(URLSafeBase64Encoder).decode('utf-8'),
@@ -41,6 +42,7 @@ def _build_profile_block(username):
                 'public': PublicKey(PrivateKey(v['privatekey']).public_key.encode()).encode(URLSafeBase64Encoder).decode('utf-8'),
             } for k, v in us['previous_keys'].items()
         }
+        # end WARNING
     return pb
 
 def user_profile(args):

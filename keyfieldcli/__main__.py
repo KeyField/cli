@@ -40,6 +40,8 @@ def __main__():
     cmd_keys_newuser.set_defaults(func=keys.new_user)
     cmd_keys_newuser.add_argument('username', type=str)
     cmd_keys_newuser.add_argument('--force', action='store_true', help="Overwrite the existing user identity.")
+    cmd_keys_rotate = subcmds_keys.add_parser('rotate', help="Regenerate a new main user keypair, preserving previous keypairs.")
+    cmd_keys_rotate.set_defaults(func=keys.rotate_user_key)
 
     subcmds_user = cmd_user.add_subparsers(
         title="KeyField User Identity Management Commands",
