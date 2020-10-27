@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-from .cmds import keys, chat
+from .cmds import keys, chat, user
 
 def __main__():
     parser = argparse.ArgumentParser()
@@ -25,6 +25,7 @@ def __main__():
     cmd_keys = subcmds.add_parser('keys', help="Manage KeyField keys")
     cmd_account = subcmds.add_parser('account', help="Manage your account on your homeserver")
     cmd_config = subcmds.add_parser('config', help="Change settings of the KeyField CLI")
+    cmd_user = subcmds.add_parser('user', help="Manage or view your user identity.")
 
     subcmds_keys = cmd_keys.add_subparsers(
         title="KeyField Key Management Commands",
@@ -39,6 +40,14 @@ def __main__():
     cmd_keys_newuser.set_defaults(func=keys.new_user)
     cmd_keys_newuser.add_argument('username', type=str)
     cmd_keys_newuser.add_argument('--force', action='store_true', help="Overwrite the existing user identity.")
+
+    subcmds_user = cmd_user.add_subparsers(
+        title="KeyField User Identity Management Commands",
+        dest="command",
+        required=True
+    )
+    cmd_user_info = subcmds_user.add_parser('info', help="View information about the user identity.")
+    cmd_user_info.set_defaults(func=user.user_info)
 
     subcmds_chat = cmd_chat.add_subparsers(
         title="KeyField Chat Commands"

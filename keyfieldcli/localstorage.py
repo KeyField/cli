@@ -55,6 +55,7 @@ class LocalStorage():
         self.username = username
         self.storagefile = LocalStorage._get_storage_filepath(username)
         self.readonly = readonly
+        self._storage_data = None
 
     def __enter__(self):
         with open(self.storagefile, 'rb') as f:
@@ -68,11 +69,25 @@ class LocalStorage():
         enc = self._box.encrypt(bson.dumps(self._storage_data))
         with open(self.storagefile, 'wb') as f:
             f.write(enc)
+        self._storage_data = None
+
+    def save(self):
+        if self.readonly:
+            raise RuntimeError("Storage not writable.")
+        if not self._storage_data:
+            raise RuntimeError("Storage not opened.")
+        enc = self._box.encrypt(bson.dumps(self._storage_data))
+        with open(self.storagefile, 'wb') as f:
+            f.write(enc)
 
     def __setitem__(self, item, value):
+        if self._storage_data is None:
+            raise RuntimeError("Storage not opened yet.")
         if self.readonly:
             raise RuntimeError(f"LocalStorage<{self.username}> is readonly.")
         self._storage_data[item] = value
 
     def __getitem__(self, item):
+        if self._storage_data is None:
+            raise RuntimeError("Storage not opened yet.")
         return self._storage_data[item]

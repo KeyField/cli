@@ -19,7 +19,7 @@ def _get_user_privatekey(username):
 def _get_user_verifykey(username):
     user_storage = LocalStorage(username, readonly=True)
     with user_storage as us:
-        return VerifyKey(_get_user_signingkey(username).verify_key)
+        return VerifyKey(_get_user_signingkey(username).verify_key.encode())
 
 def _get_user_publickey(username):
     user_storage = LocalStorage(username, readonly=True)
@@ -71,7 +71,9 @@ def new_user(args):
                 "publickey": _get_device_publickey().encode(),
             }
         }
-    print(f"Identity created: {_get_user_publickey(username).encode(URLSafeBase64Encoder)} with username {username}")
+        us.save()
+        ds.save()
+        print(f"Identity created: {_get_user_verifykey(username).encode(URLSafeBase64Encoder)} with username {username}")
 
 def rotate_user_key():
     """Rotates the user main key.
