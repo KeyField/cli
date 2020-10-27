@@ -1,0 +1,6 @@
+pynacl
+keyring
+SecretStorage
+msgpack
+requests
+bson

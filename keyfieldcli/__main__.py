@@ -38,6 +38,7 @@ def __main__():
     cmd_keys_newuser = subcmds_keys.add_parser('newuser', help="Create a new KeyField identity.")
     cmd_keys_newuser.set_defaults(func=keys.new_user)
     cmd_keys_newuser.add_argument('username', type=str)
+    cmd_keys_newuser.add_argument('--force', action='store_true', help="Overwrite the existing user identity.")
 
     subcmds_chat = cmd_chat.add_subparsers(
         title="KeyField Chat Commands"
