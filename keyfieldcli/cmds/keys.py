@@ -56,7 +56,10 @@ def new_user(args):
     with user_storage as us, device_storage as ds:
         us["username"] = username
         ds["username"] = username
-        us["homeserver"] = ""
+        us["homeserver"] = {
+            "address": "",
+            "public": "",
+        }
         us["signingkey"] = SigningKey.generate().encode()
         us["privatekey"] = PrivateKey.generate().encode()
         us["previous_keys"] = {
