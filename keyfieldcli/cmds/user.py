@@ -41,6 +41,7 @@ def _build_profile_block(username):
                 'public': PublicKey(PrivateKey(v['privatekey']).public_key.encode()).encode(URLSafeBase64Encoder).decode('utf-8'),
             } for k, v in us['previous_keys'].items()
         }
+    return pb
 
 def user_profile(args):
     username = get_username(args)
