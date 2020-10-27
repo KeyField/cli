@@ -27,7 +27,7 @@ def _get_user_publickey(username):
         return PublicKey(_get_user_privatekey(username).public_key.encode())
 
 def _get_device_privatekey():
-    device_storage = LocalStorage('device')
+    device_storage = LocalStorage('device', readonly=True)
     with device_storage as ds:
         return PrivateKey(ds["privatekey"])
 
