@@ -46,8 +46,11 @@ def __main__():
         dest="command",
         required=True
     )
-    cmd_user_info = subcmds_user.add_parser('info', help="View information about the user identity.")
+    cmd_user_info = subcmds_user.add_parser('info', help="View information about the local user identity.")
     cmd_user_info.set_defaults(func=user.user_info)
+    cmd_user_profile = subcmds_user.add_parser('profile', help="View the full public user identity block")
+    cmd_user_profile.set_defaults(func=user.user_profile)
+    cmd_user_profile.add_argument('--export', type=str, metavar='file', help="Write the signed binary profile data to a file. (Same data published to a homeserver)")
 
     subcmds_chat = cmd_chat.add_subparsers(
         title="KeyField Chat Commands"
@@ -72,7 +75,6 @@ def __main__():
         print(f"Command not yet implemented!")
         return
 
-    print(args)
     args.func(args)
 
 if __name__ == '__main__':
