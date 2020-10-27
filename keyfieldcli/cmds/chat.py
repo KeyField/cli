@@ -1,7 +1,7 @@
 
-def _send_text_message(chat: ChatChannel, content: str):
+def _send_text_message(chat, content: str):
     pass
 
-def send_message(chatid: str, content: str):
+def send_message(args):
     """Send a standard text-content message to a channel"""
     pass
