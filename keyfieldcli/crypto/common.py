@@ -1,6 +1,6 @@
 
 from nacl.signing import SigningKey, VerifyKey
-from nacl.public import PrivateKey, PublicKey
+from nacl.public import PrivateKey, PublicKey, Box, SealedBox
 from nacl.encoding import URLSafeBase64Encoder
 
 from ..localstorage import LocalStorage
@@ -29,7 +29,7 @@ def _get_user_publickey(username):
 
 def _get_homeserver_box(username):
     """Get the box shared between the user and their homeserver."""
-    u_privkey = _get_user_privatekey()
+    u_privkey = _get_user_privatekey(username)
     user_storage = LocalStorage(username, readonly=True)
     with user_storage as us:
         s_pubkey = PublicKey(us["homeserver"]["public"], URLSafeBase64Encoder)

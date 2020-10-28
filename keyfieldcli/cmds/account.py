@@ -18,6 +18,7 @@ from ..crypto.common import (
     _build_profile_block,
     _get_user_signingkey,
     _get_user_verifykey,
+    _get_homeserver_box,
 )
 from ..hs_api_v1.homeserver import (
     get_server_advertised_verifykey,
