@@ -5,7 +5,7 @@ import base64
 import binascii
 import os
 from pathlib import Path
-import bson
+import msgpack
 import keyring
 import nacl.secret
 import nacl.utils
@@ -31,7 +31,7 @@ class LocalStorage():
         filepath = LocalStorage._get_storage_filepath(username)
         filepath.parent.mkdir(exist_ok=True)
         with filepath.open('wb') as f:
-            d = bson.dumps({})
+            d = msgpack.packb({})
             enc = box.encrypt(d)
             f.write(enc)
 
@@ -60,13 +60,13 @@ class LocalStorage():
     def __enter__(self):
         with open(self.storagefile, 'rb') as f:
             unenc = self._box.decrypt(f.read())
-            self._storage_data = bson.loads(unenc)
+            self._storage_data = msgpack.unpackb(unenc, strict_map_key=False)
         return self
 
     def __exit__(self, type, value, traceback):
         if self.readonly:
             return
-        enc = self._box.encrypt(bson.dumps(self._storage_data))
+        enc = self._box.encrypt(msgpack.packb(self._storage_data))
         with open(self.storagefile, 'wb') as f:
             f.write(enc)
         self._storage_data = None
@@ -76,7 +76,7 @@ class LocalStorage():
             raise RuntimeError(f"LocalStorage<{self.username}> is readonly.")
         if self._storage_data is None:
             raise RuntimeError("Storage not opened.")
-        enc = self._box.encrypt(bson.dumps(self._storage_data))
+        enc = self._box.encrypt(msgpack.packb(self._storage_data))
         with open(self.storagefile, 'wb') as f:
             f.write(enc)
 

@@ -3,4 +3,3 @@ keyring
 SecretStorage
 msgpack
 requests
-bson

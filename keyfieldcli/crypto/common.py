@@ -60,7 +60,7 @@ def _build_profile_block(username):
         }
         # TODO construct sigchain
         pb['previous_keys'] = {
-            k: {
+            str(k): {
                 'verify': VerifyKey(SigningKey(v['signingkey']).verify_key.encode()).encode(URLSafeBase64Encoder).decode('utf-8'),
                 'public': PublicKey(PrivateKey(v['privatekey']).public_key.encode()).encode(URLSafeBase64Encoder).decode('utf-8'),
             } for k, v in us['previous_keys'].items()

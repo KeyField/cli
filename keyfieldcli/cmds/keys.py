@@ -9,6 +9,7 @@ from ..crypto.common import (
     _get_user_verifykey,
     _get_user_signingkey,
     _get_user_privatekey,
+    _get_user_publickey,
 )
 from ..utils import get_timestamp_seconds, get_username
 from ..localstorage import LocalStorage
