@@ -3,7 +3,7 @@
 import argparse
 import sys
 
-from .cmds import keys, chat, user
+from .cmds import keys, chat, user, account
 
 def __main__():
     parser = argparse.ArgumentParser()
@@ -18,7 +18,7 @@ def __main__():
         help="Verbosity decrease"
     )
     subcmds = parser.add_subparsers(
-        title="KeyField CLI Commands",
+        title="KeyField CLI commands",
     )
     cmd_chat = subcmds.add_parser('chat', help="Send and receive messages with other users")
     cmd_search = subcmds.add_parser('search', help="Search for a User, Key, Device, or Homeserver")
@@ -28,7 +28,7 @@ def __main__():
     cmd_user = subcmds.add_parser('user', help="Manage or view your user identity.")
 
     subcmds_keys = cmd_keys.add_subparsers(
-        title="KeyField Key Management Commands",
+        title="KeyField Key management commands",
         dest="command",
         required=True,
     )
@@ -44,15 +44,25 @@ def __main__():
     cmd_keys_rotate.set_defaults(func=keys.rotate_user_key)
 
     subcmds_user = cmd_user.add_subparsers(
-        title="KeyField User Identity Management Commands",
+        title="KeyField User Identity management commands",
         dest="command",
-        required=True
+        required=True,
     )
     cmd_user_info = subcmds_user.add_parser('info', help="View information about the local user identity.")
     cmd_user_info.set_defaults(func=user.user_info)
-    cmd_user_profile = subcmds_user.add_parser('profile', help="View the full public user identity block")
+    cmd_user_profile = subcmds_user.add_parser('profile', help="View the full public user identity block.")
     cmd_user_profile.set_defaults(func=user.user_profile)
-    cmd_user_profile.add_argument('--export', type=str, metavar='file', help="Write the signed binary profile data to a file. (Same data published to a homeserver)")
+    cmd_user_profile.add_argument('--export', type=str, metavar='file', help="Write the signed binary profile data to a file. (Same data that is published to a homeserver)")
+
+    subcmds_account = cmd_account.add_subparsers(
+        title="KeyField Homeserver account management commands",
+        dest="command",
+        required=True,
+    )
+    cmd_account_register = subcmds_account.add_parser('register', help="Register an account on a homeserver.")
+    cmd_account_register.set_defaults(func=account.account_register)
+    cmd_account_register.add_argument('address', type=str, metavar='https://your-homeserver-address', help="Full address of the homeserver you want to register with.")
+    cmd_account_register.add_argument('--public', '--publickey', '--pubkey', metavar="ServerPublicKey", help="Verification key of the server as a base64 encoded string.")
 
     subcmds_chat = cmd_chat.add_subparsers(
         title="KeyField Chat Commands"

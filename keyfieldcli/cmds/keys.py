@@ -3,37 +3,16 @@ from nacl.signing import SigningKey, VerifyKey
 from nacl.public import PrivateKey, PublicKey
 from nacl.encoding import URLSafeBase64Encoder
 
+from ..crypto.common import (
+    _get_device_publickey,
+    _get_device_privatekey,
+    _get_user_verifykey,
+    _get_user_signingkey,
+    _get_user_privatekey,
+)
 from ..utils import get_timestamp_seconds, get_username
 from ..localstorage import LocalStorage
 
-def _get_user_signingkey(username):
-    user_storage = LocalStorage(username, readonly=True)
-    with user_storage as us:
-        return SigningKey(us["signingkey"])
-
-def _get_user_privatekey(username):
-    user_storage = LocalStorage(username, readonly=True)
-    with user_storage as us:
-        return PrivateKey(us["privatekey"])
-
-def _get_user_verifykey(username):
-    user_storage = LocalStorage(username, readonly=True)
-    with user_storage as us:
-        return VerifyKey(_get_user_signingkey(username).verify_key.encode())
-
-def _get_user_publickey(username):
-    user_storage = LocalStorage(username, readonly=True)
-    with user_storage as us:
-        return PublicKey(_get_user_privatekey(username).public_key.encode())
-
-def _get_device_privatekey():
-    device_storage = LocalStorage('device', readonly=True)
-    with device_storage as ds:
-        return PrivateKey(ds["privatekey"])
-
-def _get_device_publickey():
-    privkey = _get_device_privatekey()
-    return PublicKey(privkey.public_key.encode())
 
 def new_user(args):
     """Creates a brand new KeyField user identity.
@@ -59,6 +38,7 @@ def new_user(args):
         us["homeserver"] = {
             "address": "",
             "public": "",
+            "verify": "",
         }
         us["signingkey"] = SigningKey.generate().encode()
         us["privatekey"] = PrivateKey.generate().encode()
